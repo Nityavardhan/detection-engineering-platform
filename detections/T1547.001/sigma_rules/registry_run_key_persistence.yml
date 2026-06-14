@@ -1,0 +1,34 @@
+title: Registry Run Key Persistence
+id: d6e0f1a4-7b5c-4c2d-e9f6-a1b4c5d8e0f7
+status: experimental
+description: |
+    Detects modification of Windows Registry Run and RunOnce keys used for
+    persistence. Adversaries add entries to these keys to execute malware
+    at user logon or system startup.
+references:
+    - https://attack.mitre.org/techniques/T1547/001/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.persistence
+    - attack.t1547.001
+logsource:
+    category: registry_set
+    product: windows
+detection:
+    selection:
+        TargetObject|contains:
+            - '\Software\Microsoft\Windows\CurrentVersion\Run'
+            - '\Software\Microsoft\Windows\CurrentVersion\RunOnce'
+            - '\Software\Microsoft\Windows\CurrentVersion\RunServices'
+            - '\Software\Microsoft\Windows\CurrentVersion\RunServicesOnce'
+    filter_legitimate:
+        Image|endswith:
+            - '\msiexec.exe'
+            - '\setup.exe'
+    condition: selection and not filter_legitimate
+falsepositives:
+    - Legitimate software installers adding autostart entries
+    - System administration tools configuring autorun entries
+level: high

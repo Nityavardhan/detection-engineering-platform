@@ -1,0 +1,342 @@
+{
+  "name": "Detection Engineering Platform Coverage",
+  "versions": {
+    "attack": "14",
+    "navigator": "4.9",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "Validated detection coverage from automated ATT&CK simulation lab",
+  "filters": {
+    "platforms": [
+      "Windows"
+    ]
+  },
+  "sorting": 0,
+  "layout": {
+    "layout": "side",
+    "aggregateFunction": "average",
+    "showID": true,
+    "showName": true,
+    "showAggregateScores": false,
+    "countUnscored": false,
+    "expandedSubtechniques": "annotated"
+  },
+  "hideDisabled": false,
+  "techniques": [
+    {
+      "techniqueID": "T1070.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1003.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1021.002",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1053.005",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1055.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1059.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1078",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1082",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1083",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1110.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1218.011",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1486",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1490",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1547.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1566.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-14"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ff6666",
+      "#ffe766",
+      "#8ec843"
+    ],
+    "minValue": 0,
+    "maxValue": 100
+  },
+  "legendItems": [
+    {
+      "label": "Detected",
+      "color": "#2ecc71"
+    },
+    {
+      "label": "Partial",
+      "color": "#f39c12"
+    },
+    {
+      "label": "Missed",
+      "color": "#e74c3c"
+    }
+  ],
+  "metadata": [],
+  "links": [],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#dddddd",
+  "selectTechniquesAcrossTactics": true,
+  "selectSubtechniquesWithParent": false
+}

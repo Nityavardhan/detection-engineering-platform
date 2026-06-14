@@ -1,0 +1,36 @@
+title: Potential Ransomware File Encryption Activity
+id: b6c0d1e4-7f5a-4a2b-c9d6-e1f4a5b8c0d2
+status: experimental
+description: |
+    Detects processes that create files with known ransomware extensions or
+    indicators of mass file encryption. Also detects vssadmin or wbadmin
+    usage in the same context, which indicates ransomware preparation.
+references:
+    - https://attack.mitre.org/techniques/T1486/
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.impact
+    - attack.t1486
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_ransom_note:
+        CommandLine|contains:
+            - 'README'
+            - 'DECRYPT'
+            - 'RECOVER'
+            - 'ransom'
+            - '.locked'
+            - '.encrypted'
+            - '.crypto'
+    selection_encrypt_tool:
+        Image|endswith:
+            - '\cipher.exe'
+        CommandLine|contains: '/w:'
+    condition: selection_ransom_note or selection_encrypt_tool
+falsepositives:
+    - Legitimate encryption tools used by IT for data protection
+    - File backup software creating encrypted archives
+level: critical

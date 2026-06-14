@@ -1,0 +1,40 @@
+# Virtual environment
+venv/
+.venv/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment files
+.env
+
+# Database (auto-generated)
+data/platform.db
+*.db-journal
+
+# Evidence EVTX files (large binaries)
+evidence/*/raw/*.evtx
+
+# Generated outputs (reproducible)
+playbooks/generated/
+reports/generated/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# AI cache (if extended)
+data/ai_cache/

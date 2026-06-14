@@ -1,0 +1,56 @@
+technique_id: T1082
+technique_name: "System Information Discovery"
+tactic: Discovery
+severity: MEDIUM
+false_positive_risk: MEDIUM
+
+adversary_context: |
+  After gaining access, attackers immediately run system discovery commands to
+  understand the environment — OS version, hostname, IP configuration, domain
+  membership, and current user context. This information drives decisions about
+  privilege escalation paths, lateral movement targets, and exploitation
+  techniques. Virtually every post-exploitation framework (Cobalt Strike,
+  Metasploit, Empire) runs these commands automatically. APT29, Lazarus,
+  and most threat groups begin post-compromise activity with system enumeration.
+
+containment_steps: |
+  1. If multiple discovery commands detected in rapid succession from a single
+     process, this is likely an active compromise — isolate the host
+  2. Identify the parent process launching the discovery commands
+  3. Check if the user account running the commands has legitimate admin access
+  4. Monitor for subsequent privilege escalation or lateral movement attempts
+  5. Preserve the process tree and command history for forensics
+
+investigation_steps: |
+  1. Correlate Sysmon EID 1 events for discovery commands by ParentProcessId
+  2. If 3+ discovery commands share the same parent, this is high confidence
+  3. Check the parent process — cmd.exe spawned by PowerShell is suspicious
+  4. Review timing — commands within 60 seconds suggest automated enumeration
+  5. Check for net.exe commands targeting domain (net user /domain, net group)
+  6. Look for subsequent credential access or lateral movement activity
+
+evidence_checklist: |
+  - [ ] Sysmon EID 1 — all discovery command process creation events
+  - [ ] Parent process tree for the discovery session
+  - [ ] User account running the commands and its privilege level
+  - [ ] Timeline showing discovery → next attacker action
+
+remediation_steps: |
+  1. Investigate and close the initial access vector
+  2. Reset credentials for the compromised account
+  3. Audit all information gathered during the discovery session
+  4. Monitor for attacker action based on discovered information
+  5. Implement canary files/tokens to detect discovery in sensitive areas
+
+false_positive_scenarios: |
+  1. Helpdesk or sysadmin running systeminfo/ipconfig for troubleshooting.
+     Tuning: Correlate with ticketing system; exclude known admin workstations.
+  2. Login scripts executing whoami or hostname at logon.
+     Tuning: Exclude known login script parent processes.
+
+compliance_notes: |
+  NIST CSF: DE.CM-7 — Monitoring for unauthorized activity
+  CIS Controls v8: 8.8 — Collect Command-Line Audit Logs
+  CIS Controls v8: 8.2 — Collect Audit Logs
+  ISO 27001: 8.15 — Logging
+  ISO 27001: 8.16 — Monitoring Activities

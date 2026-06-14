@@ -1,0 +1,104 @@
+# NIST CSF mappings per technique
+# Format: technique_id → list of control mappings
+
+T1059.001:
+  - control_id: "DE.CM-1"
+    control_name: "The network is monitored to detect potential cybersecurity events"
+    mapping_note: "PowerShell script block logging detects encoded execution"
+  - control_id: "RS.AN-1"
+    control_name: "Notifications from detection systems are investigated"
+    mapping_note: "Alert on EID 4104 triggers investigation workflow"
+
+T1053.005:
+  - control_id: "DE.CM-3"
+    control_name: "Personnel activity is monitored"
+    mapping_note: "Scheduled task creation events are logged and monitored"
+  - control_id: "PR.AC-4"
+    control_name: "Access permissions are managed"
+    mapping_note: "Task creation by non-admin accounts is anomalous"
+
+T1003.001:
+  - control_id: "PR.AC-1"
+    control_name: "Identities and credentials are managed"
+    mapping_note: "LSASS dump indicates credential compromise requiring rotation"
+  - control_id: "DE.CM-1"
+    control_name: "The network is monitored"
+    mapping_note: "Process access to LSASS is monitored via Sysmon EID 10"
+
+T1070.001:
+  - control_id: "PR.PT-1"
+    control_name: "Audit/log records are determined, documented, implemented"
+    mapping_note: "Log clearing is a direct attack on audit capability"
+  - control_id: "DE.CM-3"
+    control_name: "Personnel activity is monitored"
+    mapping_note: "EID 1102 fires when Security log is cleared"
+
+T1547.001:
+  - control_id: "DE.CM-7"
+    control_name: "Monitoring for unauthorized personnel, connections, devices"
+    mapping_note: "Registry run key modification is monitored via Sysmon EID 13"
+
+T1078:
+  - control_id: "PR.AC-6"
+    control_name: "Identities are proofed and bound to credentials"
+    mapping_note: "Valid account abuse detected through logon anomalies"
+
+T1110.001:
+  - control_id: "DE.CM-1"
+    control_name: "The network is monitored"
+    mapping_note: "Password spraying detected via EID 4625 threshold analysis"
+  - control_id: "PR.AC-7"
+    control_name: "Users, devices, and assets are authenticated"
+    mapping_note: "Account lockout policies limit spray effectiveness"
+
+T1486:
+  - control_id: "RC.RP-1"
+    control_name: "Response plan is executed during or after an incident"
+    mapping_note: "File encryption triggers immediate IR response"
+  - control_id: "PR.IP-4"
+    control_name: "Backups of information are conducted"
+    mapping_note: "Ransomware impact mitigated by offline backups"
+
+T1490:
+  - control_id: "PR.IP-4"
+    control_name: "Backups of information are conducted"
+    mapping_note: "VSS deletion directly targets backup recovery capability"
+  - control_id: "DE.CM-1"
+    control_name: "Network is monitored"
+    mapping_note: "vssadmin delete is monitored via process creation logging"
+
+T1055.001:
+  - control_id: "DE.CM-1"
+    control_name: "Network is monitored"
+    mapping_note: "CreateRemoteThread events detected via Sysmon EID 8"
+
+T1218.011:
+  - control_id: "DE.CM-1"
+    control_name: "Network is monitored"
+    mapping_note: "Rundll32 LOLBIN abuse detected via process creation anomalies"
+
+T1083:
+  - control_id: "DE.CM-7"
+    control_name: "Monitoring for unauthorized activity"
+    mapping_note: "File enumeration commands indicate post-compromise discovery"
+
+T1082:
+  - control_id: "DE.CM-7"
+    control_name: "Monitoring for unauthorized activity"
+    mapping_note: "System discovery commands indicate active reconnaissance"
+
+T1021.002:
+  - control_id: "DE.CM-1"
+    control_name: "Network is monitored"
+    mapping_note: "SMB admin share access logged via EID 5140/5145"
+  - control_id: "PR.AC-3"
+    control_name: "Remote access is managed"
+    mapping_note: "Lateral movement via SMB requires network access controls"
+
+T1566.001:
+  - control_id: "PR.AT-1"
+    control_name: "All users are informed and trained"
+    mapping_note: "Phishing initial access mitigated by user awareness training"
+  - control_id: "DE.CM-4"
+    control_name: "Malicious code is detected"
+    mapping_note: "Office spawning shells detected via process chain monitoring"

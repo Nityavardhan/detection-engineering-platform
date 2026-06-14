@@ -1,0 +1,48 @@
+title: PowerShell Suspicious Parameter Combinations
+id: b4c8d9e2-5f3a-4a0b-c7d4-e9f2a3b6c8d5
+status: experimental
+description: |
+    Detects PowerShell invocations with suspicious parameter combinations commonly
+    used by malware, including -NoProfile, -NonInteractive, -WindowStyle Hidden,
+    -ExecutionPolicy Bypass, and download cradles.
+references:
+    - https://attack.mitre.org/techniques/T1059/001/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.execution
+    - attack.t1059.001
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_img:
+        Image|endswith:
+            - '\powershell.exe'
+            - '\pwsh.exe'
+    selection_hidden:
+        CommandLine|contains:
+            - '-WindowStyle Hidden'
+            - '-w hidden'
+            - '-w 1'
+    selection_bypass:
+        CommandLine|contains:
+            - '-ExecutionPolicy Bypass'
+            - '-ep bypass'
+            - '-exec bypass'
+    selection_download:
+        CommandLine|contains:
+            - 'Invoke-WebRequest'
+            - 'IWR '
+            - 'Invoke-Expression'
+            - 'IEX '
+            - 'DownloadString'
+            - 'DownloadFile'
+            - 'Net.WebClient'
+            - 'Start-BitsTransfer'
+    condition: selection_img and (selection_hidden or selection_bypass or selection_download)
+falsepositives:
+    - IT automation scripts that legitimately use -ExecutionPolicy Bypass
+    - Software deployment tools (SCCM, PDQ Deploy) using hidden windows
+level: high

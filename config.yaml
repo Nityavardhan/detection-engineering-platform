@@ -1,0 +1,38 @@
+# Detection Engineering Platform — Configuration
+# All paths are relative to the project root unless absolute.
+
+paths:
+  chainsaw_exe: "C:/Tools/chainsaw/chainsaw.exe"
+  sigma_rules_dir: "C:/Tools/sigma/rules"
+  evidence_base: "evidence"
+  playbooks_output: "playbooks/generated"
+  reports_output: "reports/generated"
+  attack_stix_data: "data/enterprise-attack.json"
+  database: "data/platform.db"
+  navigator_layer: "attack_coverage/coverage_layer.json"
+  navigator_base: "data/attack_navigator_base.json"
+
+# Lab Settings (Windows VM)
+lab:
+  windows_log_channels:
+    sysmon: "Microsoft-Windows-Sysmon/Operational"
+    security: "Security"
+    powershell: "Microsoft-Windows-PowerShell/Operational"
+    system: "System"
+    taskscheduler: "Microsoft-Windows-TaskScheduler/Operational"
+  evtx_export_path: "C:/Temp/evtx_exports"
+
+# Detection Settings
+detection:
+  severity_levels:
+    - CRITICAL
+    - HIGH
+    - MEDIUM
+    - LOW
+    - INFORMATIONAL
+  default_severity: MEDIUM
+
+# Dashboard
+dashboard:
+  port: 8501
+  title: "Detection Engineering Platform"

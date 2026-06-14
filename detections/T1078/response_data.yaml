@@ -1,0 +1,60 @@
+technique_id: T1078
+technique_name: "Valid Accounts"
+tactic: Defense Evasion
+severity: HIGH
+false_positive_risk: MEDIUM
+
+adversary_context: |
+  Attackers use compromised valid credentials to access systems while appearing
+  as legitimate users. This is one of the hardest techniques to detect because
+  the activity looks authorized. Credentials may be obtained via phishing,
+  credential dumping (T1003), password spraying (T1110), or purchased on dark
+  web markets. APT29, APT28, and FIN7 extensively use valid accounts after
+  initial credential compromise. The key evasion goal is to avoid triggering
+  behavioral alerts by mimicking legitimate user patterns.
+
+containment_steps: |
+  1. Reset the password for the compromised account immediately
+  2. Revoke all active sessions and tokens for the account
+  3. Enable MFA on the account if not already enforced
+  4. Check if the account has been used on other systems (lateral movement)
+  5. Monitor the account for further suspicious activity for 72 hours
+
+investigation_steps: |
+  1. Review EID 4624 for logon type (type 3 = network, type 10 = RDP)
+  2. Check source IP/workstation in EID 4624 — is it a known/expected host?
+  3. Review EID 4672 for special privilege assignment at logon
+  4. Check EID 4648 for explicit credential use (RunAs, credential passing)
+  5. Build a timeline of all activity from this account in the past 24-72 hours
+  6. Compare logon times against the user's normal working hours
+
+evidence_checklist: |
+  - [ ] Security log EID 4624 (logon events for the account)
+  - [ ] Security log EID 4648 (explicit credential usage)
+  - [ ] Security log EID 4672 (special privilege assignment)
+  - [ ] Domain Controller authentication logs
+  - [ ] VPN/remote access logs for the account
+  - [ ] User's normal working pattern (HR records, badge access)
+
+remediation_steps: |
+  1. Force password reset for the compromised account
+  2. Enable MFA for the account and all similar privileged accounts
+  3. Review and reduce account privileges to minimum required
+  4. Disable the account if it is a dormant or service account not currently needed
+  5. Implement Privileged Access Workstation (PAW) for admin accounts
+  6. Review all systems accessed by the account for compromise indicators
+
+false_positive_scenarios: |
+  1. Administrators legitimately logging in from unusual locations during travel.
+     Tuning: Correlate with travel approval records or VPN connection patterns.
+  2. Service accounts performing expected operations outside business hours.
+     Tuning: Document and allowlist known service account behaviors.
+  3. Shared accounts used by multiple team members from different workstations.
+     Tuning: Eliminate shared accounts where possible; log correlation per user.
+
+compliance_notes: |
+  NIST CSF: PR.AC-6 — Identities are proofed and bound to credentials
+  CIS Controls v8: 5.1 — Establish Account Inventory
+  CIS Controls v8: 6.3 — Require MFA for Externally-Exposed Applications
+  ISO 27001: 5.16 — Identity Management
+  ISO 27001: 5.17 — Authentication Information

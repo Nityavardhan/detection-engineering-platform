@@ -1,0 +1,59 @@
+technique_id: T1490
+technique_name: "Inhibit System Recovery"
+tactic: Impact
+severity: CRITICAL
+false_positive_risk: VERY_LOW
+
+adversary_context: |
+  Ransomware operators delete Volume Shadow Copies and disable Windows recovery
+  options before encrypting files. This ensures victims cannot recover from
+  VSS snapshots and must either pay the ransom or restore from offline backups.
+  Commands used: "vssadmin delete shadows /all /quiet", "wmic shadowcopy delete",
+  "bcdedit /set recoveryenabled no". This technique is used by virtually every
+  ransomware family (Ryuk, Conti, LockBit, REvil, WannaCry). Any occurrence
+  is an IMMEDIATE CRITICAL incident.
+
+containment_steps: |
+  1. IMMEDIATE: This is an active ransomware incident — isolate the host NOW
+  2. If VSS deletion is detected, encryption is imminent or has begun
+  3. Disconnect ALL network shares accessible from this host
+  4. Block the source process hash network-wide via EDR immediately
+  5. Check if encryption has started on this or other hosts
+  6. Activate the organization's ransomware incident response plan
+
+investigation_steps: |
+  1. Identify the process that executed vssadmin/wmic (Sysmon EID 1)
+  2. Trace the parent process chain back to initial execution
+  3. Check the timeline: VSS deletion → file encryption (T1486) → ransom note
+  4. Determine if data exfiltration occurred before encryption (double extortion)
+  5. Identify all hosts where this process or related payloads were deployed
+  6. Determine the initial access vector
+
+evidence_checklist: |
+  - [ ] Sysmon EID 1 — vssadmin.exe/wmic.exe process creation with command line
+  - [ ] VSS event logs showing shadow copy deletion
+  - [ ] Timeline correlation with encryption events
+  - [ ] Network connections from the ransomware process
+  - [ ] Parent process chain back to initial access
+
+remediation_steps: |
+  1. Isolate all potentially affected systems
+  2. Restore VSS if possible (vssadmin create shadow /for=C:)
+  3. Restore from offline/offsite backups
+  4. Close the initial access vector
+  5. Remove all ransomware artifacts and persistence
+  6. Rebuild systems from known-good images
+  7. Implement AppLocker to restrict vssadmin.exe and wmic.exe usage
+
+false_positive_scenarios: |
+  1. Backup administrators managing VSS storage space by deleting old snapshots.
+     Even if legitimate, this MUST be verified against a change management ticket.
+     NOTE: Deleting ALL shadows (/all /quiet) is almost never legitimate.
+
+compliance_notes: |
+  NIST CSF: PR.IP-4 — Backups of information are conducted
+  NIST CSF: DE.CM-1 — Network is monitored
+  CIS Controls v8: 11.1 — Establish Data Recovery Practice
+  CIS Controls v8: 11.3 — Protect Recovery Data
+  ISO 27001: 8.13 — Information Backup
+  ISO 27001: 5.30 — ICT Readiness for Business Continuity

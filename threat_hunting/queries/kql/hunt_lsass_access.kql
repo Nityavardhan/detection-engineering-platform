@@ -1,0 +1,51 @@
+// HUNT-002: Broad LSASS Process Access Detection
+// Platform: Microsoft Defender for Endpoint
+// Purpose: Detect ANY process accessing LSASS memory (hunting, not production)
+// Author: Nityavardhan
+// Date: 2024-01-01
+
+// Query 1: All LSASS access events from non-system processes
+DeviceEvents
+| where ActionType == "ProcessAccess"
+| where FileName =~ "lsass.exe"                 // Target is LSASS
+| where InitiatingProcessFileName !~ "lsass.exe" // Exclude self-access
+| where InitiatingProcessFolderPath !startswith @"C:\Windows\System32\"
+                                                 // Exclude system32 processes
+| where InitiatingProcessFolderPath !startswith @"C:\Program Files\Windows Defender\"
+                                                 // Exclude Windows Defender
+| project
+    Timestamp,
+    DeviceName,
+    InitiatingProcessFileName,                   // What accessed LSASS
+    InitiatingProcessFolderPath,                 // Full path of accessor
+    InitiatingProcessCommandLine,                // Command line of accessor
+    InitiatingProcessAccountName,                // Who ran the accessor
+    AdditionalFields                             // Contains GrantedAccess
+| extend GrantedAccess = tostring(
+    parse_json(AdditionalFields).GrantedAccess
+)
+| order by Timestamp desc
+| take 200
+
+// Query 2: LSASS access with specific dump-level access masks
+DeviceEvents
+| where ActionType == "ProcessAccess"
+| where FileName =~ "lsass.exe"
+| extend AccessMask = tostring(
+    parse_json(AdditionalFields).GrantedAccess
+)
+| where AccessMask in (
+    "0x1FFFFF",                                  // PROCESS_ALL_ACCESS
+    "0x1010",                                    // VM_READ + QUERY_INFO
+    "0x1038",                                    // VM_READ + QUERY_INFO + VM_WRITE
+    "0x1F1FFF",                                  // Extended all access
+    "0x143A"                                     // Mimikatz default mask
+)
+| project
+    Timestamp,
+    DeviceName,
+    InitiatingProcessFileName,
+    InitiatingProcessFolderPath,
+    InitiatingProcessAccountName,
+    AccessMask
+| order by Timestamp desc

@@ -1,0 +1,58 @@
+technique_id: T1547.001
+technique_name: "Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder"
+tactic: Persistence
+severity: HIGH
+false_positive_risk: LOW
+
+adversary_context: |
+  Registry Run keys are among the most abused persistence mechanisms in Windows.
+  Attackers write entries to HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+  or the HKLM equivalent so their malware executes every time a user logs on.
+  This technique is used by virtually every major threat group including APT29,
+  APT28, Lazarus, FIN7, and most commodity malware families. The key evasion
+  goal is blending in with legitimate autostart entries.
+
+containment_steps: |
+  1. Identify the malicious Run key entry immediately:
+     Get-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Run
+     Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Run
+  2. Remove the malicious entry without rebooting (preserve evidence first)
+  3. Quarantine the executable referenced in the Run key value
+  4. Isolate the host if the payload has C2 capability
+  5. Check for additional persistence mechanisms on the same host
+
+investigation_steps: |
+  1. Review Sysmon EID 13 (RegistryValueSet) for the exact timestamp and process
+  2. Identify the process that wrote the Run key (Image field in EID 13)
+  3. Check if the referenced executable is signed and by which publisher
+  4. Verify file hash against threat intelligence (VirusTotal, internal TI)
+  5. Review the parent process of the writer — was it a dropper?
+  6. Check for related network connections from the payload (Sysmon EID 3)
+
+evidence_checklist: |
+  - [ ] Sysmon EID 13 events for Run key modifications
+  - [ ] Registry export: reg export HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+  - [ ] Copy of the executable referenced in the Run key
+  - [ ] File hash and digital signature verification results
+  - [ ] Process creation logs for the writer process
+
+remediation_steps: |
+  1. Delete the malicious registry entry
+  2. Delete or quarantine the payload executable
+  3. Scan the host with updated AV signatures
+  4. Implement Sysmon EID 13 monitoring for all Run key paths
+  5. Consider AppLocker policies to restrict what can be added to autorun
+  6. Verify no other persistence mechanisms exist
+
+false_positive_scenarios: |
+  1. Legitimate software installers adding entries during installation.
+     Tuning: Allowlist known installer paths and signed executables.
+  2. Browser updates and communication tools adding autostart entries.
+     Tuning: Maintain a baseline of expected Run key entries per image.
+
+compliance_notes: |
+  NIST CSF: DE.CM-7 — Monitoring for unauthorized activity
+  CIS Controls v8: 8.2 — Collect Audit Logs
+  CIS Controls v8: 4.1 — Secure Configuration Process
+  ISO 27001: 8.15 — Logging
+  ISO 27001: 8.16 — Monitoring Activities

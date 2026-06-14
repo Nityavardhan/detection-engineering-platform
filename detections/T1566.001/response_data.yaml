@@ -1,0 +1,62 @@
+technique_id: T1566.001
+technique_name: "Phishing: Spearphishing Attachment"
+tactic: Initial Access
+severity: CRITICAL
+false_positive_risk: LOW
+
+adversary_context: |
+  Spearphishing with malicious attachments remains the #1 initial access vector
+  for targeted attacks. Attackers send crafted emails with weaponized Office
+  documents containing macros that, when enabled by the user, execute malicious
+  code. The macro typically spawns cmd.exe or powershell.exe to download and
+  execute further payloads. APT29 (COVID-19 themed lures), APT28 (political
+  lures), Lazarus Group (job offer lures), and FIN7 (business-themed lures)
+  all extensively use spearphishing attachments. The evasion goal is social
+  engineering the user into enabling macros.
+
+containment_steps: |
+  1. Isolate the affected endpoint immediately
+  2. Do NOT close the Office application — preserve the document in memory
+  3. Search for and quarantine the malicious email across all mailboxes
+  4. Block the sender domain and any URLs in the email
+  5. Check if any payload was downloaded and executed
+  6. Reset the user's credentials if any credential harvesting occurred
+
+investigation_steps: |
+  1. Identify the Office application and the exact document opened (Sysmon EID 1 parent chain)
+  2. Check the child process — what command did the macro execute?
+  3. Review Sysmon EID 3 for network connections from the Office process
+  4. Check for files downloaded by the macro (Sysmon EID 11 — FileCreate)
+  5. Review PowerShell EID 4104 if PowerShell was spawned
+  6. Check if similar emails were sent to other users in the organization
+
+evidence_checklist: |
+  - [ ] The malicious email (EML format) from email gateway
+  - [ ] The weaponized document attachment
+  - [ ] Sysmon EID 1 — Office → shell process creation chain
+  - [ ] Sysmon EID 3 — network connections from Office or child processes
+  - [ ] PowerShell EID 4104 — script content if PowerShell was used
+  - [ ] Any downloaded payloads or dropped files
+
+remediation_steps: |
+  1. Delete the malicious email from all mailboxes (Search and Purge)
+  2. Block the sender domain and related infrastructure
+  3. Submit the document sample to your AV vendor and sandbox service
+  4. Enable Attack Surface Reduction rules for Office macro execution
+  5. Implement VBA macro restrictions (Block macros from Internet in Group Policy)
+  6. Conduct targeted phishing awareness training for affected users
+  7. Update email gateway rules to catch similar attachments
+
+false_positive_scenarios: |
+  1. Legacy Office add-ins that spawn helper processes.
+     Tuning: Document known legitimate add-in behaviors and exclude specific paths.
+  2. Office applications opening embedded objects that trigger process creation.
+     Tuning: Maintain allowlist of known-good embedded object handlers.
+
+compliance_notes: |
+  NIST CSF: PR.AT-1 — All users are informed and trained
+  NIST CSF: DE.CM-4 — Malicious code is detected
+  CIS Controls v8: 9.1 — Fully Supported Browsers and Email Clients
+  CIS Controls v8: 14.1 — Security Awareness Program
+  ISO 27001: 6.3 — Information Security Awareness and Training
+  ISO 27001: 8.7 — Protection Against Malware

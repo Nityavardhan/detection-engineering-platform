@@ -1,0 +1,41 @@
+{
+  "name": "Detection Engineering Platform Coverage",
+  "versions": {
+    "attack": "14",
+    "navigator": "4.9",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "Validated detection coverage — automated ATT&CK simulation lab",
+  "filters": {
+    "platforms": ["Windows"]
+  },
+  "sorting": 0,
+  "layout": {
+    "layout": "side",
+    "aggregateFunction": "average",
+    "showID": true,
+    "showName": true,
+    "showAggregateScores": false,
+    "countUnscored": false,
+    "expandedSubtechniques": "annotated"
+  },
+  "hideDisabled": false,
+  "techniques": [],
+  "gradient": {
+    "colors": ["#e74c3c", "#f39c12", "#2ecc71"],
+    "minValue": 0,
+    "maxValue": 100
+  },
+  "legendItems": [
+    {"label": "Detected", "color": "#2ecc71"},
+    {"label": "Partial", "color": "#f39c12"},
+    {"label": "Missed", "color": "#e74c3c"}
+  ],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#dddddd",
+  "selectTechniquesAcrossTactics": true,
+  "selectSubtechniquesWithParent": false,
+  "metadata": [],
+  "links": []
+}

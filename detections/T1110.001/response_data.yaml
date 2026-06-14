@@ -1,0 +1,57 @@
+technique_id: T1110.001
+technique_name: "Brute Force: Password Spraying"
+tactic: Credential Access
+severity: HIGH
+false_positive_risk: MEDIUM
+
+adversary_context: |
+  Password spraying differs from brute force by trying one or two common passwords
+  against many accounts rather than many passwords against one account. This avoids
+  account lockout thresholds. Attackers target organizations using common passwords
+  like "Season+Year" (Summer2024!) or "Company+123". APT28 (Fancy Bear) and
+  Iranian threat groups extensively use password spraying against cloud and VPN
+  endpoints. The evasion goal is staying below the lockout threshold.
+
+containment_steps: |
+  1. Implement temporary account lockout for targeted accounts (5 min lockout after 3 failures)
+  2. Block the source IP address at the perimeter if external
+  3. Force password reset for any accounts that had successful logon after failed attempts
+  4. Enable MFA for all accounts targeted by the spray
+  5. Notify the SOC to monitor for successful credential use from spray sources
+
+investigation_steps: |
+  1. Aggregate EID 4625 events by source IpAddress over a 30-minute window
+  2. Count distinct TargetUserName values per source — sprays target many accounts
+  3. Check for any EID 4624 (success) from the same source after the failures
+  4. Review the SubStatus code: 0xC000006A = wrong password, 0xC0000064 = nonexistent user
+  5. Check VPN/OWA/ADFS logs if spray originated externally
+  6. Cross-reference targeted accounts with known public email lists
+
+evidence_checklist: |
+  - [ ] Security log EID 4625 (failed logons) aggregated by source
+  - [ ] Security log EID 4624 (successful logons from same source)
+  - [ ] Domain Controller logs for the authentication timeline
+  - [ ] VPN/web application access logs
+  - [ ] Network flow data showing connection patterns from source
+
+remediation_steps: |
+  1. Force password reset for any account where spray succeeded
+  2. Implement MFA for all user accounts
+  3. Deploy Azure AD Smart Lockout or equivalent for cloud accounts
+  4. Review and enforce password complexity policies (minimum 14 characters)
+  5. Ban common passwords using Azure AD Custom Banned Passwords or similar
+  6. Implement IP-based conditional access policies
+
+false_positive_scenarios: |
+  1. Employee forgetting password and trying multiple times across accounts.
+     Tuning: Set threshold above 10 distinct accounts in 30 minutes.
+  2. Password policy change causing service accounts to fail authentication.
+     Tuning: Exclude known service accounts with documented authentication patterns.
+
+compliance_notes: |
+  NIST CSF: DE.CM-1 — The network is monitored
+  NIST CSF: PR.AC-7 — Users, devices, and assets are authenticated
+  CIS Controls v8: 5.2 — Use Unique Passwords
+  CIS Controls v8: 6.3 — Require MFA
+  ISO 27001: 5.17 — Authentication Information
+  ISO 27001: 8.15 — Logging

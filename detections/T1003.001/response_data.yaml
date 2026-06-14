@@ -1,0 +1,75 @@
+technique_id: T1003.001
+technique_name: "LSASS Memory"
+tactic: Credential Access
+severity: CRITICAL
+false_positive_risk: LOW
+
+adversary_context: |
+  LSASS (Local Security Authority Subsystem Service) stores credential material
+  including NTLM hashes, Kerberos tickets, and cleartext passwords in memory.
+  Attackers dump LSASS memory to extract these credentials for lateral movement.
+  Tools used include Mimikatz (sekurlsa::logonpasswords), ProcDump (procdump -ma lsass.exe),
+  Task Manager (right-click → Create Dump File), and comsvcs.dll (rundll32 MiniDump).
+  Sysmon EID 10 (ProcessAccess) is the highest-fidelity detection for this technique —
+  any non-Windows process requesting PROCESS_VM_READ on lsass.exe is suspicious.
+  APT groups: APT28, APT29, Lazarus Group, Carbanak.
+
+containment_steps: |
+  1. Isolate the host IMMEDIATELY — credentials are already compromised
+  2. Assume ALL credentials cached on this system are compromised
+  3. Do NOT reboot before forensic imaging (destroys volatile evidence)
+  4. Suspend the process that accessed LSASS (do not kill — preserve for forensics)
+  5. Begin emergency credential rotation for all accounts logged onto this host
+
+investigation_steps: |
+  1. Identify the source process from Sysmon EID 10 (SourceImage field)
+  2. Check the GrantedAccess value — 0x1FFFFF or 0x1010 are dump-level access
+  3. Search for ProcDump or Mimikatz artifacts:
+     Get-ChildItem -Path C:\ -Recurse -Include *.dmp,mimikatz*,mimi* -ErrorAction SilentlyContinue
+  4. Check for comsvcs.dll usage: search EID 1 for "MiniDump" in CommandLine
+  5. Identify all accounts that were logged into the system (EID 4624 within 24h)
+  6. These accounts must be considered fully compromised
+  7. Check for outbound network connections from the source process (Sysmon EID 3)
+
+evidence_checklist: |
+  - [ ] Microsoft-Windows-Sysmon/Operational.evtx (focus EID 10)
+  - [ ] Windows Security log (EID 4624, 4625, 4648, 4672)
+  - [ ] Full memory image of affected system (winpmem or DumpIt)
+  - [ ] Copy of any .dmp files found on the system
+  - [ ] Process list at time of incident (tasklist /v output)
+  - [ ] Network connections at time of incident (netstat -ano output)
+
+remediation_steps: |
+  1. Force password reset for ALL accounts that had active sessions on this host
+  2. Revoke all Kerberos tickets for affected accounts (klist purge + domain reset)
+  3. If domain admin credentials were on the host, assume full domain compromise
+  4. Enable Credential Guard (Windows 10 Enterprise) to prevent future LSASS access
+  5. Deploy Windows Defender Credential Guard where supported
+  6. Enable LSA Protection: HKLM\SYSTEM\CurrentControlSet\Control\Lsa → RunAsPPL = 1
+  7. Remove the dump tool from the system and quarantine
+
+false_positive_scenarios: |
+  1. Antivirus/EDR products (CrowdStrike, Defender) routinely access LSASS for
+     protection purposes. These will trigger the detection.
+     Tuning: Whitelist known security product paths — NOT by process name alone
+     (attackers rename tools), but by signed path and publisher.
+  2. Windows Error Reporting (WER) may access LSASS during crash reporting.
+     Tuning: Whitelist C:\Windows\System32\WerFault.exe with specific GrantedAccess.
+  3. Some backup agents access LSASS as part of system state backup.
+     Tuning: Document and whitelist specific backup agent process paths.
+
+compliance_notes: |
+  NIST CSF:
+    - PR.AC-1: Identities and credentials are issued, managed, verified, revoked
+    - DE.CM-1: The network is monitored to detect potential cybersecurity events
+    - RS.MI-2: Incidents are mitigated
+
+  CIS Controls v8:
+    - 5.3: Disable Dormant Accounts
+    - 5.4: Restrict Administrator Privileges to Dedicated Admin Accounts
+    - 10.5: Enable Anti-Exploitation Features
+
+  ISO 27001:
+    - A.9.2.1: User Registration and De-registration
+    - A.9.4.2: Secure Log-on Procedures
+    - A.16.1.5: Response to Information Security Incidents

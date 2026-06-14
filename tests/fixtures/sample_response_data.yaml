@@ -1,0 +1,31 @@
+technique_id: T1059.001
+technique_name: "PowerShell"
+tactic: Execution
+severity: HIGH
+false_positive_risk: LOW
+
+adversary_context: |
+  Test adversary context for unit tests.
+
+containment_steps: |
+  1. Isolate the affected host
+  2. Terminate suspicious processes
+
+investigation_steps: |
+  1. Check EID 4104 ScriptBlockText
+  2. Review parent process chain
+
+evidence_checklist: |
+  - [ ] PowerShell Operational log
+  - [ ] Sysmon operational log
+
+remediation_steps: |
+  1. Remove malicious artifacts
+  2. Reset credentials
+
+false_positive_scenarios: |
+  1. IT automation scripts
+
+compliance_notes: |
+  NIST CSF: DE.CM-1
+  CIS Controls v8: 8.8

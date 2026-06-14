@@ -1,0 +1,58 @@
+technique_id: T1055.001
+technique_name: "Process Injection: Dynamic-link Library Injection"
+tactic: Defense Evasion
+severity: HIGH
+false_positive_risk: LOW
+
+adversary_context: |
+  DLL injection allows attackers to execute code within the address space of
+  another legitimate process. This hides malicious activity behind trusted
+  process names, evades application whitelisting, and inherits the target
+  process's privileges. Common tools include custom injectors, Cobalt Strike
+  (process injection module), and Metasploit (migrate command). Lazarus Group,
+  APT32, and APT41 extensively use DLL injection for evasion and privilege
+  escalation. The key evasion goal is hiding malicious code execution inside
+  a trusted process.
+
+containment_steps: |
+  1. Identify both the source and target processes from Sysmon EID 8
+  2. Suspend (do not kill) the target process to preserve injected code in memory
+  3. Capture a memory dump of the target process for forensic analysis
+  4. Isolate the host from the network
+  5. Block the source executable from executing on other hosts
+
+investigation_steps: |
+  1. Review Sysmon EID 8 — identify SourceImage and TargetImage
+  2. Check if the source process is signed and its digital certificate is valid
+  3. Review Sysmon EID 7 (ImageLoad) for DLLs loaded by the target after injection
+  4. Check Sysmon EID 10 (ProcessAccess) for PROCESS_VM_WRITE to the target
+  5. Look for network connections (EID 3) from the target process post-injection
+  6. Investigate the parent process chain of the source process
+
+evidence_checklist: |
+  - [ ] Sysmon EID 8 (CreateRemoteThread) event data
+  - [ ] Sysmon EID 7 (ImageLoad) for DLLs loaded post-injection
+  - [ ] Memory dump of the target process
+  - [ ] Copy of the source executable (injector)
+  - [ ] Process tree and parent-child relationships
+
+remediation_steps: |
+  1. Kill the source (injector) process
+  2. Restart the target process from a known-good state
+  3. Remove the injector executable and any dropped DLLs
+  4. Scan the host with updated AV/EDR signatures
+  5. Enable Windows Defender Exploit Guard process injection mitigations
+  6. Implement code integrity policies to prevent unsigned DLL loading
+
+false_positive_scenarios: |
+  1. Security products (EDR agents) injecting monitoring hooks into processes.
+     Tuning: Allowlist specific security product paths by signed publisher.
+  2. Visual Studio debugger attaching to processes during development.
+     Tuning: Exclude known development tools in lab/dev environments only.
+
+compliance_notes: |
+  NIST CSF: DE.CM-1 — Network is monitored
+  CIS Controls v8: 13.7 — Deploy a Host-Based Intrusion Detection Solution
+  CIS Controls v8: 10.5 — Enable Anti-Exploitation Features
+  ISO 27001: 8.7 — Protection Against Malware
+  ISO 27001: 8.16 — Monitoring Activities

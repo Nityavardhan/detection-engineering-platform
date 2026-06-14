@@ -1,0 +1,32 @@
+title: SMB Administrative Share Access
+id: f4a8b9c2-5d3e-4e0f-a7b4-c9d2e3f6a8b0
+status: experimental
+description: |
+    Detects access to administrative SMB shares (C$, ADMIN$, IPC$) via
+    network share access events. Access to these shares from non-management
+    workstations indicates potential lateral movement.
+references:
+    - https://attack.mitre.org/techniques/T1021/002/
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.lateral_movement
+    - attack.t1021.002
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 5140
+        ShareName|contains:
+            - '\C$'
+            - '\ADMIN$'
+            - '\IPC$'
+    filter_machine:
+        SubjectUserName|endswith: '$'
+    condition: selection and not filter_machine
+falsepositives:
+    - System administrators accessing admin shares for maintenance
+    - SCCM and patch management tools accessing C$ for software deployment
+    - Vulnerability scanners performing authenticated scans
+level: medium

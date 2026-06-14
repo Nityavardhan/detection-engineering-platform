@@ -1,0 +1,53 @@
+technique_id: T1083
+technique_name: "File and Directory Discovery"
+tactic: Discovery
+severity: MEDIUM
+false_positive_risk: MEDIUM
+
+adversary_context: |
+  After initial access, attackers enumerate the file system to locate sensitive
+  data, credentials, configuration files, and other valuable targets. Common
+  targets include user home directories, network shares, password files, and
+  database files. This reconnaissance feeds into data exfiltration (TA0010)
+  and further lateral movement decisions. APT29, FIN7, and most post-exploitation
+  frameworks automate file discovery as a standard enumeration step.
+
+containment_steps: |
+  1. Identify the source process and user account performing the discovery
+  2. If the account or process is compromised, isolate the host immediately
+  3. Review what directories were accessed during the discovery session
+  4. Monitor for subsequent data staging or exfiltration from discovered paths
+  5. Consider whether sensitive files found may have been copied
+
+investigation_steps: |
+  1. Check Sysmon EID 1 for the discovery commands and their parent process
+  2. Review which specific directories were enumerated (CommandLine arguments)
+  3. Look for file access events (EID 4663) following the discovery commands
+  4. Check for file copy, compression, or exfiltration commands following discovery
+  5. Review the user account — is this expected behavior for this user role?
+
+evidence_checklist: |
+  - [ ] Sysmon EID 1 — process creation with discovery command lines
+  - [ ] Security EID 4663 — file access events in sensitive directories
+  - [ ] PowerShell EID 4104 — script block logging of Get-ChildItem usage
+  - [ ] Network connections following discovery (potential exfiltration)
+
+remediation_steps: |
+  1. If unauthorized, terminate the discovery process and revoke access
+  2. Audit file permissions on sensitive directories
+  3. Implement least-privilege access controls for file shares
+  4. Deploy file integrity monitoring on critical directories
+  5. Enable SACL auditing on high-value data directories
+
+false_positive_scenarios: |
+  1. System administrators performing legitimate file system audits.
+     Tuning: Exclude known admin workstations and documented maintenance windows.
+  2. Backup software scanning directories for incremental backup selection.
+     Tuning: Exclude known backup agent service accounts and process paths.
+
+compliance_notes: |
+  NIST CSF: DE.CM-7 — Monitoring for unauthorized activity
+  CIS Controls v8: 8.2 — Collect Audit Logs
+  CIS Controls v8: 3.3 — Configure Data Access Control Lists
+  ISO 27001: 8.15 — Logging
+  ISO 27001: 5.15 — Access Control

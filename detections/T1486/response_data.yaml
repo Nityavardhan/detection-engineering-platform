@@ -1,0 +1,61 @@
+technique_id: T1486
+technique_name: "Data Encrypted for Impact"
+tactic: Impact
+severity: CRITICAL
+false_positive_risk: LOW
+
+adversary_context: |
+  Ransomware operators encrypt files on compromised systems to extort payment.
+  Modern ransomware (Ryuk, Conti, LockBit, BlackCat) typically: disables recovery
+  mechanisms (T1490), exfiltrates data for double extortion, then encrypts all
+  accessible files. The encryption is often preceded by discovery (T1083) and
+  lateral movement (T1021.002) to maximize impact. Encryption events generate
+  high-volume Sysmon EID 11 (FileCreate) with unusual extensions. This is
+  always a CRITICAL incident requiring immediate response.
+
+containment_steps: |
+  1. IMMEDIATE: Disconnect affected hosts from the network (do NOT shut down)
+  2. Identify patient zero and the encryption spread pattern
+  3. Block the ransomware executable hash network-wide via EDR
+  4. Isolate all network segments that may be affected
+  5. Activate the organization's ransomware incident response plan
+  6. Notify executive leadership, legal, and law enforcement
+
+investigation_steps: |
+  1. Identify the ransomware variant from ransom note or encrypted file extension
+  2. Determine encryption start time from Sysmon EID 11 (FileCreate) timestamps
+  3. Identify the process performing encryption and trace its origin
+  4. Check for data exfiltration before encryption (double extortion)
+  5. Determine the initial access vector (phishing, RDP, vulnerability)
+  6. Map all systems affected by the encryption
+
+evidence_checklist: |
+  - [ ] Ransom note file (README, DECRYPT instructions)
+  - [ ] Sample encrypted files (for decryption tool analysis)
+  - [ ] Sysmon EID 11 — FileCreate events with anomalous extensions
+  - [ ] Process tree of the encrypting process
+  - [ ] Network connections showing C2 and potential exfiltration
+  - [ ] Timeline of attacker activity from initial access to encryption
+
+remediation_steps: |
+  1. Do NOT pay the ransom without legal counsel and law enforcement guidance
+  2. Check NoMoreRansom.org for available decryptors for the variant
+  3. Restore from offline/offsite backups after ensuring clean environment
+  4. Rebuild affected systems from known-good images
+  5. Close the initial access vector
+  6. Implement all hardening measures before reconnecting to network
+  7. Conduct post-incident review and update IR playbooks
+
+false_positive_scenarios: |
+  1. Legitimate encryption software (BitLocker, VeraCrypt) performing full-disk encryption.
+     Tuning: These use different mechanisms than file-level ransomware encryption.
+  2. Backup software creating encrypted backup archives.
+     Tuning: Exclude known backup agent process paths and destination directories.
+
+compliance_notes: |
+  NIST CSF: RC.RP-1 — Response plan is executed
+  NIST CSF: PR.IP-4 — Backups of information are conducted
+  CIS Controls v8: 11.1 — Establish Data Recovery Practice
+  CIS Controls v8: 11.2 — Perform Automated Backups
+  ISO 27001: 8.13 — Information Backup
+  ISO 27001: 5.26 — Response to Information Security Incidents

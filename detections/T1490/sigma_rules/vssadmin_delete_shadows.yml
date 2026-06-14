@@ -1,0 +1,44 @@
+title: VSS Shadow Copy Deletion - Inhibit System Recovery
+id: c7d1e2f5-8a6b-4b3c-d0e7-f2a5b6c9d1e3
+status: experimental
+description: |
+    Detects deletion of Volume Shadow Copies via vssadmin.exe or wmic.exe.
+    This is almost always associated with ransomware preparation and has
+    near-zero false positive rate. Any occurrence warrants immediate CRITICAL
+    response.
+references:
+    - https://attack.mitre.org/techniques/T1490/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1490/T1490.md
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.impact
+    - attack.t1490
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_vssadmin:
+        Image|endswith: '\vssadmin.exe'
+        CommandLine|contains|all:
+            - 'delete'
+            - 'shadows'
+    selection_wmic:
+        Image|endswith: '\wmic.exe'
+        CommandLine|contains|all:
+            - 'shadowcopy'
+            - 'delete'
+    selection_wbadmin:
+        Image|endswith: '\wbadmin.exe'
+        CommandLine|contains:
+            - 'delete catalog'
+            - 'delete systemstatebackup'
+    selection_bcdedit:
+        Image|endswith: '\bcdedit.exe'
+        CommandLine|contains:
+            - 'recoveryenabled no'
+            - 'bootstatuspolicy ignoreallfailures'
+    condition: selection_vssadmin or selection_wmic or selection_wbadmin or selection_bcdedit
+falsepositives:
+    - Legitimate backup software managing VSS snapshots (very rare to delete all)
+level: critical

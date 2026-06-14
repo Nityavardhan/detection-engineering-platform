@@ -1,0 +1,41 @@
+title: LSASS Memory Access for Credential Dumping
+id: f8a2b3c6-9d7e-4e4f-a1b8-c3d6e7f0a2b9
+status: experimental
+description: |
+    Detects processes accessing LSASS memory with access masks that indicate
+    credential dumping. GrantedAccess values of 0x1FFFFF (PROCESS_ALL_ACCESS)
+    or 0x1010 (PROCESS_VM_READ | PROCESS_QUERY_INFORMATION) from non-system
+    processes are highly suspicious.
+references:
+    - https://attack.mitre.org/techniques/T1003/001/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.001/T1003.001.md
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.credential_access
+    - attack.t1003.001
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection:
+        TargetImage|endswith: '\lsass.exe'
+        GrantedAccess|contains:
+            - '0x1FFFFF'
+            - '0x1010'
+            - '0x1038'
+            - '0x1F1FFF'
+            - '0x1F0FFF'
+            - '0x143A'
+    filter_system:
+        SourceImage|startswith:
+            - 'C:\Windows\System32\'
+            - 'C:\Windows\SysWOW64\'
+            - 'C:\Program Files\Windows Defender\'
+            - 'C:\ProgramData\Microsoft\Windows Defender\'
+    condition: selection and not filter_system
+falsepositives:
+    - Antivirus and EDR products accessing LSASS for protection
+    - Windows Error Reporting (WerFault.exe) during crash reporting
+    - Some backup agents performing system state backup
+level: critical

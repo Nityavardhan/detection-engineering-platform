@@ -1,0 +1,33 @@
+title: DLL Injection via CreateRemoteThread
+id: b0c4d5e8-1f9a-4a6b-c3d0-e5f8a9b2c4d6
+status: experimental
+description: |
+    Detects CreateRemoteThread events (Sysmon EID 8) where the source process
+    is different from the target process and the source is not a known Windows
+    system process. This is a primary indicator of DLL injection.
+references:
+    - https://attack.mitre.org/techniques/T1055/001/
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.defense_evasion
+    - attack.privilege_escalation
+    - attack.t1055.001
+logsource:
+    category: create_remote_thread
+    product: windows
+detection:
+    selection:
+        EventID: 8
+    filter_system:
+        SourceImage|startswith:
+            - 'C:\Windows\System32\'
+            - 'C:\Windows\SysWOW64\'
+            - 'C:\Program Files\'
+            - 'C:\Program Files (x86)\'
+    condition: selection and not filter_system
+falsepositives:
+    - Debugging tools attaching to processes
+    - Antivirus and EDR products injecting monitoring hooks
+    - Some legitimate software using cross-process injection for IPC
+level: high

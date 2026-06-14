@@ -1,0 +1,29 @@
+title: "[HUNT] Broad LSASS Process Access"
+id: f0a4b5c8-1d9e-4e6f-a3b0-c5d8e9f2a4b6
+status: test
+description: |
+    HUNTING RULE — NOT FOR PRODUCTION. Detects ANY process access to lsass.exe
+    regardless of GrantedAccess value. This rule is intentionally broad and will
+    generate noise from security products and system processes. Use for periodic
+    hunting sweeps to identify unexpected LSASS access patterns.
+references:
+    - https://attack.mitre.org/techniques/T1003/001/
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.credential_access
+    - attack.t1003.001
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection:
+        TargetImage|endswith: '\lsass.exe'
+    filter_lsass_self:
+        SourceImage|endswith: '\lsass.exe'
+    condition: selection and not filter_lsass_self
+falsepositives:
+    - Antivirus and EDR products (CrowdStrike, Defender, Carbon Black)
+    - Windows Error Reporting (WerFault.exe)
+    - System processes performing legitimate LSASS interaction
+level: informational

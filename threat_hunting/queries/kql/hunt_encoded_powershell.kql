@@ -1,0 +1,47 @@
+// HUNT-001: Broad Encoded PowerShell Detection
+// Platform: Azure Sentinel / Microsoft Defender for Endpoint
+// Purpose: Detect ANY Base64-related PowerShell activity (hunting, not production)
+// Author: Nityavardhan
+// Date: 2024-01-01
+
+// Query 1: Script Block Logging (EID 4104) with Base64 content
+SecurityEvent
+| where EventID == 4104                          // PowerShell Script Block Logging
+| where EventData has_any (
+    "FromBase64String",                          // .NET Base64 decode method
+    "ToBase64String",                            // .NET Base64 encode method
+    "[Convert]::",                               // System.Convert class usage
+    "EncodedCommand",                            // Standard encoded command parameter
+    "Base64"                                     // Any Base64 reference
+)
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    EventData,                                   // Contains ScriptBlockText
+    EventID
+| extend ScriptContent = extract(@"ScriptBlockText>(.+?)</", 1, EventData)
+| where isnotempty(ScriptContent)
+| order by TimeGenerated desc
+| take 100
+
+// Query 2: Process Creation with encoded PowerShell indicators
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| where ProcessCommandLine has_any (
+    "-enc",                                      // Abbreviated -EncodedCommand
+    "-e ",                                       // Short form
+    "base64",                                    // Any base64 reference
+    "FromBase64",                                // Inline decode
+    "-EncodedCommand"                            // Full parameter name
+)
+| project
+    Timestamp,
+    DeviceName,
+    AccountName,
+    FileName,
+    ProcessCommandLine,
+    InitiatingProcessFileName,                   // Parent process
+    InitiatingProcessCommandLine
+| order by Timestamp desc
+| take 100

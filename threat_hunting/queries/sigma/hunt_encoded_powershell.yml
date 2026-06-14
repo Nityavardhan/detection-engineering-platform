@@ -1,0 +1,45 @@
+title: "[HUNT] Broad PowerShell Base64 Detection"
+id: e9f3a4b7-0c8d-4d5e-f2a9-b4c7d8e1f3a5
+status: test
+description: |
+    HUNTING RULE — NOT FOR PRODUCTION. Catches any Base64 decode operation
+    in PowerShell, not just the known -EncodedCommand pattern. Too noisy for
+    production but valid for periodic hunting sweeps.
+references:
+    - https://attack.mitre.org/techniques/T1059/001/
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.execution
+    - attack.t1059.001
+logsource:
+    product: windows
+    service: powershell
+detection:
+    selection_scriptblock:
+        EventID: 4104
+        ScriptBlockText|contains:
+            - 'FromBase64String'
+            - 'ToBase64String'
+            - '[Convert]::'
+            - 'EncodedCommand'
+            - 'encodedcommand'
+            - '-enc '
+            - '-e '
+            - 'Base64'
+    selection_process:
+        EventID: 1
+        Image|endswith:
+            - '\powershell.exe'
+            - '\pwsh.exe'
+        CommandLine|contains:
+            - 'base64'
+            - 'Base64'
+            - '-enc'
+            - 'FromBase64'
+    condition: selection_scriptblock or selection_process
+falsepositives:
+    - Legitimate scripts using Base64 for data encoding (not execution)
+    - Certificate operations using Base64
+    - JSON/XML processing with Base64 fields
+level: low

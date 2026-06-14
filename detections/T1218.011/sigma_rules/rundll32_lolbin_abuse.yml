@@ -1,0 +1,40 @@
+title: Rundll32 LOLBIN Abuse
+id: c1d5e6f9-2a0b-4b7c-d4e1-f6a9b0c3d5e7
+status: experimental
+description: |
+    Detects abuse of rundll32.exe as a Living-off-the-Land Binary (LOLBIN).
+    Triggers on rundll32 making network connections, executing JavaScript/VBScript,
+    or spawning suspicious child processes like cmd.exe or powershell.exe.
+references:
+    - https://attack.mitre.org/techniques/T1218/011/
+    - https://lolbas-project.github.io/lolbas/Binaries/Rundll32/
+author: Nityavardhan
+date: 2024/01/01
+tags:
+    - attack.defense_evasion
+    - attack.t1218.011
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_parent:
+        ParentImage|endswith: '\rundll32.exe'
+    selection_child:
+        Image|endswith:
+            - '\cmd.exe'
+            - '\powershell.exe'
+            - '\pwsh.exe'
+            - '\wscript.exe'
+            - '\cscript.exe'
+            - '\mshta.exe'
+    selection_script:
+        Image|endswith: '\rundll32.exe'
+        CommandLine|contains:
+            - 'javascript:'
+            - 'vbscript:'
+            - 'shell32.dll,ShellExec_RunDLL'
+    condition: (selection_parent and selection_child) or selection_script
+falsepositives:
+    - Legitimate software using rundll32 to call DLL exports
+    - Windows built-in functionality using rundll32 (e.g., Control Panel items)
+level: high

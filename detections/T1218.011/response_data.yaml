@@ -1,0 +1,55 @@
+technique_id: T1218.011
+technique_name: "System Binary Proxy Execution: Rundll32"
+tactic: Defense Evasion
+severity: HIGH
+false_positive_risk: LOW
+
+adversary_context: |
+  Rundll32.exe is a legitimate Windows utility for loading DLL files. Attackers
+  abuse it to proxy execution of malicious code through a trusted binary, bypassing
+  application whitelisting and process-based detection. Common abuse patterns include
+  executing JavaScript/VBScript payloads, loading malicious DLLs, and using
+  rundll32 as a parent process for cmd.exe or PowerShell. APT29, Lazarus Group,
+  and many commodity malware families use rundll32 for defense evasion.
+
+containment_steps: |
+  1. Kill the suspicious rundll32.exe process and its children immediately
+  2. Identify the DLL or script being loaded from the command line arguments
+  3. Quarantine the malicious DLL file
+  4. Block network connections from rundll32.exe at the host firewall
+  5. Isolate the host if network beaconing was observed
+
+investigation_steps: |
+  1. Parse the rundll32.exe CommandLine from Sysmon EID 1 to identify the loaded DLL
+  2. Check Sysmon EID 3 for any network connections from rundll32.exe
+  3. Verify if the loaded DLL is signed and from a trusted publisher
+  4. Check the parent process that launched rundll32 — was it a user action or malware?
+  5. Review child processes spawned by rundll32 (cmd, powershell)
+  6. Check for file drops during the rundll32 session (Sysmon EID 11)
+
+evidence_checklist: |
+  - [ ] Sysmon EID 1 — rundll32.exe process creation with full command line
+  - [ ] Sysmon EID 3 — network connections from rundll32.exe
+  - [ ] Copy of the loaded DLL or script file
+  - [ ] Process tree showing parent and child relationships
+  - [ ] Network traffic capture if C2 beaconing observed
+
+remediation_steps: |
+  1. Remove the malicious DLL from the filesystem
+  2. Block rundll32 from making outbound network connections via Windows Firewall
+  3. Implement AppLocker rules to restrict DLL loading via rundll32
+  4. Deploy WDAC (Windows Defender Application Control) policies
+  5. Review and remove any persistence referencing rundll32
+
+false_positive_scenarios: |
+  1. Windows Control Panel items executed via rundll32.exe.
+     Tuning: Allowlist known system DLL paths for Control Panel operations.
+  2. Software using rundll32 to call legitimate DLL entry points.
+     Tuning: Maintain allowlist of known application DLL paths.
+
+compliance_notes: |
+  NIST CSF: DE.CM-1 — Network is monitored
+  CIS Controls v8: 2.5 — Allowlist Authorized Software
+  CIS Controls v8: 8.8 — Collect Command-Line Audit Logs
+  ISO 27001: 8.19 — Installation of Software on Operational Systems
+  ISO 27001: 8.16 — Monitoring Activities

@@ -1,0 +1,57 @@
+technique_id: T1021.002
+technique_name: "Remote Services: SMB/Windows Admin Shares"
+tactic: Lateral Movement
+severity: HIGH
+false_positive_risk: MEDIUM
+
+adversary_context: |
+  After obtaining admin credentials, attackers use SMB administrative shares
+  (C$, ADMIN$) to move laterally across the network. They can copy tools to
+  remote systems, execute commands via PsExec or WMI, and access files on
+  remote hosts. This is one of the most common lateral movement techniques
+  used by APT29, Lazarus, Wizard Spider, and virtually all ransomware
+  operators. The evasion goal is blending in with legitimate admin activity.
+
+containment_steps: |
+  1. Block SMB (port 445) traffic from the source host to all other hosts
+  2. Reset credentials for the account used for admin share access
+  3. Identify all hosts accessed from the compromised source
+  4. Isolate both source and destination hosts for investigation
+  5. Restrict admin share access to dedicated management workstations only
+
+investigation_steps: |
+  1. Review EID 5140 — identify ShareName, SubjectUserName, and IpAddress
+  2. Correlate with EID 4624 (logon type 3) on the destination host
+  3. Check what files were accessed or copied via the admin share (EID 5145)
+  4. Look for service creation (EID 7045) on destination — PsExec indicator
+  5. Check for scheduled task creation (EID 4698) on destination
+  6. Map all hosts that were accessed and investigate each as potentially compromised
+
+evidence_checklist: |
+  - [ ] Security EID 5140 — network share access events
+  - [ ] Security EID 5145 — detailed share access (files accessed)
+  - [ ] Security EID 4624 (type 3) — network logon on destination
+  - [ ] Security EID 7045 — service creation (PsExec indicator)
+  - [ ] Network flow data showing SMB connections between hosts
+
+remediation_steps: |
+  1. Block SMB peer-to-peer communication between workstations
+  2. Implement network segmentation for sensitive servers
+  3. Disable administrative shares on workstations where not needed
+  4. Require PAW (Privileged Access Workstation) for admin share access
+  5. Deploy Windows Firewall rules restricting inbound SMB to management VLANs
+  6. Implement LAPS (Local Administrator Password Solution) to prevent credential reuse
+
+false_positive_scenarios: |
+  1. SCCM distributing software via admin shares during deployment windows.
+     Tuning: Allowlist the SCCM service account and management server IPs.
+  2. IT administrators performing remote maintenance using UNC paths.
+     Tuning: Restrict and log admin share access from PAW hosts only.
+
+compliance_notes: |
+  NIST CSF: DE.CM-1 — Network is monitored
+  NIST CSF: PR.AC-3 — Remote access is managed
+  CIS Controls v8: 12.2 — Secure Network Architecture
+  CIS Controls v8: 5.4 — Restrict Administrator Privileges
+  ISO 27001: 8.20 — Networks Security
+  ISO 27001: 5.15 — Access Control

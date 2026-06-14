@@ -1,0 +1,75 @@
+technique_id: T1059.001
+technique_name: "PowerShell"
+tactic: Execution
+severity: HIGH
+false_positive_risk: LOW
+
+adversary_context: |
+  Attackers use PowerShell because it is a native Windows tool that provides
+  deep system access, network capabilities, and execution of encoded commands
+  that evade simple string-based detection. Encoding a command in Base64 and
+  passing it via -EncodedCommand (-enc) is the most common obfuscation method.
+  Threat groups including APT29, Lazarus, and FIN7 use encoded PowerShell
+  extensively for initial execution and lateral movement. The key evasion goal
+  is to hide the actual command from simple process command-line logging.
+
+containment_steps: |
+  1. Isolate the affected host from the network immediately (physical or VLAN isolation)
+  2. Do NOT reboot — preserve volatile memory and process state
+  3. Terminate the suspicious PowerShell process:
+     Get-Process powershell | Where-Object {$_.Id -ne $PID} | Stop-Process -Force
+  4. Block outbound connections from the host at the perimeter firewall
+  5. Revoke and rotate credentials for any user account that ran the process
+
+investigation_steps: |
+  1. Decode the Base64 command from EID 4104 ScriptBlockText:
+     [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('<b64>'))
+  2. Check EID 4688 for the parent process — legitimate: explorer.exe, suspicious: winword.exe, wscript.exe
+  3. Review Sysmon EID 3 (NetworkConnect) from the PowerShell process for C2 communication
+  4. Check Sysmon EID 11 (FileCreate) for any files dropped during the session
+  5. Review scheduled tasks and Run keys for persistence artifacts:
+     Get-ScheduledTask | Where-Object {$_.Actions.Execute -like "*powershell*"}
+     Get-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Run
+  6. Check for child processes spawned by PowerShell (EID 1, parent=powershell.exe)
+
+evidence_checklist: |
+  - [ ] Microsoft-Windows-PowerShell/Operational.evtx (EID 4103, 4104)
+  - [ ] Microsoft-Windows-Sysmon/Operational.evtx (EID 1, 3, 7, 11)
+  - [ ] Windows Security log (EID 4688 if process auditing enabled)
+  - [ ] Memory dump of the PowerShell process (procdump64.exe -ma <pid>)
+  - [ ] Network capture from the time window of the alert (if available)
+  - [ ] Full list of files created/modified in the session timeframe
+
+remediation_steps: |
+  1. Remove any malicious files dropped by the script
+  2. Delete any persistence mechanisms created (scheduled tasks, Run keys, services)
+  3. Reset the password for the user account that ran the command
+  4. If credentials were accessed, rotate all passwords touched by the session
+  5. Enable Constrained Language Mode for standard users via AppLocker/WDAC
+  6. Ensure AMSI is active and not bypassed (check for registry AMSI disablement)
+  7. Review and patch the initial access vector if identified
+
+false_positive_scenarios: |
+  1. IT automation scripts run by administrators using encoded commands for
+     legitimate purposes (patch management, configuration management).
+     Tuning: Exclude known admin accounts and known-good script hashes.
+  2. Software installers that use PowerShell with -EncodedCommand during setup.
+     Tuning: Exclude specific installer parent processes and known software paths.
+  3. Monitoring agents (SCOM, CrowdStrike) that use PowerShell internally.
+     Tuning: Exclude the specific process paths of known monitoring tools.
+
+compliance_notes: |
+  NIST CSF:
+    - DE.CM-1: The network is monitored to detect potential cybersecurity events
+    - RS.AN-1: Notifications from detection systems are investigated
+    - RS.MI-3: Newly identified vulnerabilities are mitigated or documented as accepted risks
+
+  CIS Controls v8:
+    - 8.8: Collect Audit Logs — script block logging captures execution content
+    - 10.1: Deploy and Maintain Anti-Malware Software
+    - 13.6: Collect Network Traffic Flow Logs
+
+  ISO 27001:
+    - A.12.4.1: Event Logging — logging of user activities, exceptions, and events
+    - A.16.1.5: Response to Information Security Incidents
+    - A.12.2.1: Controls Against Malware
