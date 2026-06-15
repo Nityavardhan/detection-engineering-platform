@@ -86,10 +86,3 @@ Run the pytest suite to verify core logic (DB management, parsing, rendering):
 pytest tests/ -v
 ```
 
-## 👨‍💻 Author
-
-**Nityavardhan**
-B.Tech CS (Cybersecurity) @ UPES Dehradun
-[LinkedIn Profile] | [GitHub Profile]
-
-*Built to demonstrate practical capability in Detection Engineering, Automation, and Incident Response.*
