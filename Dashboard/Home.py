@@ -40,16 +40,7 @@ st.sidebar.markdown("""
 
 st.sidebar.markdown("---")
 
-st.sidebar.markdown("""
-<div style="padding: 12px; background: rgba(99,102,241,0.08); border-radius: 10px; border: 1px solid rgba(99,102,241,0.15);">
-    <div style="font-size:0.75rem; color:#64748b; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">
-        Built by
-    </div>
-    <div style="font-size:0.9rem; font-weight:600; color:#f1f5f9;">Nityavardhan</div>
-    <div style="font-size:0.78rem; color:#94a3b8; margin-top:2px;">B.Tech CS (Cybersecurity)</div>
-    <div style="font-size:0.78rem; color:#94a3b8;">UPES Dehradun</div>
-</div>
-""", unsafe_allow_html=True)
+
 
 # ── Data Loading ─────────────────────────────────────────────────
 from core.db_manager import get_summary_stats, get_all_detections

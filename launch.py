@@ -31,7 +31,7 @@ def main():
     print("      Press Ctrl+C to stop the dashboard.\n")
 
     try:
-        subprocess.run([sys.executable, "-m", "streamlit", "run", "Dashboard/app.py"])
+        subprocess.run([sys.executable, "-m", "streamlit", "run", "Dashboard/Home.py"])
     except KeyboardInterrupt:
         print("\n\n  Dashboard stopped. Goodbye!\n")
 
