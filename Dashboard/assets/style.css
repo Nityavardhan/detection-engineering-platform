@@ -1,127 +1,402 @@
-/* Detection Engineering Platform — Dashboard Styles */
-/* Clean, professional, dark-friendly CSS for Streamlit */
+/* ═══════════════════════════════════════════════════════════════
+   Detection Engineering Platform — Premium Dashboard Theme
+   Dark, glassmorphic, professional security operations aesthetic
+   ═══════════════════════════════════════════════════════════════ */
 
-/* Import professional font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* Global font */
-html, body, [class*="st-"] {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+/* ── CSS Variables ────────────────────────────────────────────── */
+:root {
+    --bg-primary: #0a0e17;
+    --bg-secondary: #111827;
+    --bg-card: rgba(17, 24, 39, 0.7);
+    --bg-card-hover: rgba(30, 41, 59, 0.8);
+    --border-subtle: rgba(99, 102, 241, 0.15);
+    --border-glow: rgba(99, 102, 241, 0.4);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-blue: #6366f1;
+    --accent-cyan: #22d3ee;
+    --accent-green: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-red: #ef4444;
+    --accent-purple: #a78bfa;
+    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+    --gradient-success: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --gradient-danger: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
 }
 
-/* Metric cards */
+/* ── Global Reset ─────────────────────────────────────────────── */
+html, body, [class*="st-"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+code, pre, [data-testid="stCode"] {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+}
+
+/* Main app container */
+.stApp {
+    background: var(--bg-primary) !important;
+    background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 50%) !important;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────── */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%) !important;
+    border-right: 1px solid var(--border-subtle) !important;
+}
+
+section[data-testid="stSidebar"] .stMarkdown p,
+section[data-testid="stSidebar"] .stMarkdown li {
+    color: var(--text-secondary) !important;
+    font-size: 0.88rem;
+}
+
+section[data-testid="stSidebar"] [data-testid="stSidebarNavItems"] a {
+    border-radius: var(--radius-sm) !important;
+    padding: 8px 12px !important;
+    margin: 2px 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stSidebarNavItems"] a:hover {
+    background: rgba(99, 102, 241, 0.15) !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stSidebarNavItems"] a[aria-current="page"] {
+    background: rgba(99, 102, 241, 0.2) !important;
+    border-left: 3px solid var(--accent-blue) !important;
+}
+
+/* ── Headers ──────────────────────────────────────────────────── */
+h1 {
+    color: var(--text-primary) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px !important;
+    font-size: 2rem !important;
+}
+
+h2 {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+    font-size: 1.4rem !important;
+    letter-spacing: -0.3px !important;
+}
+
+h3 {
+    color: var(--text-secondary) !important;
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* ── Metric Cards ─────────────────────────────────────────────── */
 [data-testid="stMetricValue"] {
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    background: var(--gradient-primary) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+[data-testid="stMetricLabel"] {
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 1px !important;
 }
 
 [data-testid="metric-container"] {
-    background: linear-gradient(135deg, rgba(44,62,80,0.4) 0%, rgba(52,73,94,0.3) 100%);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 16px 20px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 20px 24px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: var(--shadow-card) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 [data-testid="metric-container"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    border-color: var(--border-glow) !important;
+    box-shadow: var(--shadow-card), var(--shadow-glow) !important;
+    transform: translateY(-2px) !important;
 }
 
-/* Tables */
-.stDataFrame table {
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 8px;
-    overflow: hidden;
+/* ── Data Tables ──────────────────────────────────────────────── */
+[data-testid="stDataFrame"] {
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
+    border: 1px solid var(--border-subtle) !important;
 }
 
-.stDataFrame th {
-    background-color: rgba(44,62,80,0.6) !important;
-    color: #ecf0f1 !important;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    padding: 10px 12px !important;
+[data-testid="stDataFrame"] table {
+    background: var(--bg-secondary) !important;
 }
 
-.stDataFrame td {
-    padding: 8px 12px !important;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.stDataFrame tr:nth-child(even) td {
-    background-color: rgba(255,255,255,0.02);
-}
-
-.stDataFrame tr:hover td {
-    background-color: rgba(52,152,219,0.1);
-}
-
-/* Sidebar */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, rgba(30,39,46,0.95) 0%, rgba(44,62,80,0.95) 100%);
-    border-right: 1px solid rgba(255,255,255,0.05);
-}
-
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
-    font-size: 0.9rem;
-}
-
-/* Headers */
-h1 {
-    font-weight: 700 !important;
-    letter-spacing: -0.5px;
-}
-
-h2, h3 {
+[data-testid="stDataFrame"] th {
+    background: rgba(99, 102, 241, 0.12) !important;
+    color: var(--accent-purple) !important;
     font-weight: 600 !important;
-    color: #ecf0f1;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.8px !important;
+    padding: 12px 16px !important;
+    border-bottom: 2px solid var(--border-subtle) !important;
 }
 
-/* Buttons */
-.stDownloadButton > button {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 8px 20px;
-    transition: all 0.2s ease;
+[data-testid="stDataFrame"] td {
+    color: var(--text-primary) !important;
+    padding: 10px 16px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+    font-size: 0.85rem !important;
 }
 
-.stDownloadButton > button:hover {
-    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(41,128,185,0.4);
+[data-testid="stDataFrame"] tr:hover td {
+    background: rgba(99, 102, 241, 0.06) !important;
 }
 
-/* Selectbox */
-.stSelectbox > div > div {
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
+/* ── Buttons ──────────────────────────────────────────────────── */
+.stDownloadButton > button,
+.stButton > button {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    padding: 10px 24px !important;
+    letter-spacing: 0.3px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
 }
 
-/* Expander */
-.streamlit-expanderHeader {
-    font-weight: 600;
-    font-size: 0.95rem;
+.stDownloadButton > button:hover,
+.stButton > button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5) !important;
+    filter: brightness(1.1) !important;
 }
 
-/* Dividers */
+.stDownloadButton > button:active,
+.stButton > button:active {
+    transform: translateY(0px) !important;
+}
+
+/* ── Select Boxes & Inputs ────────────────────────────────────── */
+[data-testid="stSelectbox"] > div > div {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-primary) !important;
+    transition: border-color 0.2s ease !important;
+}
+
+[data-testid="stSelectbox"] > div > div:hover,
+[data-testid="stSelectbox"] > div > div:focus-within {
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 0 1px var(--accent-blue) !important;
+}
+
+/* ── Expanders ────────────────────────────────────────────────── */
+[data-testid="stExpander"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
+}
+
+[data-testid="stExpander"] summary {
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    padding: 12px 16px !important;
+}
+
+[data-testid="stExpander"] summary:hover {
+    background: rgba(99, 102, 241, 0.08) !important;
+}
+
+/* ── Alerts / Info / Warning boxes ─────────────────────────────── */
+[data-testid="stAlert"] {
+    border-radius: var(--radius-md) !important;
+    border-left-width: 4px !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+.stAlert [data-testid="stAlertContentInfo"] {
+    background: rgba(99, 102, 241, 0.08) !important;
+    border-color: var(--accent-blue) !important;
+}
+
+/* ── Dividers ─────────────────────────────────────────────────── */
 hr {
-    border-color: rgba(255,255,255,0.08) !important;
-    margin: 1.5rem 0 !important;
+    border-color: var(--border-subtle) !important;
+    margin: 2rem 0 !important;
+    opacity: 0.6;
 }
 
-/* Info/Warning boxes */
-.stAlert {
-    border-radius: 8px;
-    border-left-width: 4px;
+/* ── Tabs ─────────────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 4px !important;
+    background: var(--bg-card) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 4px !important;
+    border: 1px solid var(--border-subtle) !important;
 }
 
-/* Plotly charts container */
+.stTabs [data-baseweb="tab"] {
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    padding: 8px 20px !important;
+    transition: all 0.2s ease !important;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    color: var(--text-primary) !important;
+    background: rgba(99, 102, 241, 0.1) !important;
+}
+
+.stTabs [aria-selected="true"] {
+    background: var(--accent-blue) !important;
+    color: white !important;
+}
+
+.stTabs [data-baseweb="tab-highlight"] {
+    display: none !important;
+}
+
+.stTabs [data-baseweb="tab-border"] {
+    display: none !important;
+}
+
+/* ── Plotly charts ────────────────────────────────────────────── */
 .js-plotly-plot {
-    border-radius: 12px;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
+}
+
+/* ── Markdown in main area ────────────────────────────────────── */
+.stMarkdown p {
+    color: var(--text-secondary) !important;
+    line-height: 1.65 !important;
+}
+
+.stMarkdown strong {
+    color: var(--text-primary) !important;
+}
+
+/* ── Scrollbars ───────────────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
+}
+
+/* ── Custom helper classes (used via st.markdown) ─────────────── */
+.card-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-card);
+    margin-bottom: 16px;
+}
+
+.card-container:hover {
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.badge-detected {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-partial {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-missed {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-critical {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-high {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.badge-medium {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.section-header .icon {
+    font-size: 1.4rem;
+}
+
+.hero-subtitle {
+    color: var(--text-muted) !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.3px !important;
 }

@@ -1,5 +1,5 @@
 """
-Overview Page — Detection summary, timeline, and tactic coverage charts.
+Overview Page — Tactic coverage, timeline, and radar visualizations.
 """
 
 import streamlit as st
@@ -9,33 +9,37 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from core.db_manager import get_all_detections, get_summary_stats
+from Dashboard.components.charts import (
+    tactic_coverage_bar, detection_timeline, technique_radar
+)
 
-st.title("📊 Overview")
+st.markdown("### 📊 Overview")
+st.caption("Detection coverage across all validated ATT&CK tactics and techniques")
 
 try:
     detections = get_all_detections()
     stats = get_summary_stats()
 except Exception:
     detections = []
-    stats = {"total_techniques": 0, "detected": 0, "detection_rate": 0,
-             "severity_distribution": {}, "tactic_distribution": {}}
+    stats = {}
 
 if not detections:
-    st.info("No detection data available. Run the pipeline first.")
+    st.info("No detection data available. Run `python launch.py` first.")
     st.stop()
 
-# Key metrics
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Total Techniques", stats.get("total_techniques", 0))
-col2.metric("Detected", stats.get("detected", 0))
-col3.metric("Detection Rate", f"{stats.get('detection_rate', 0)}%")
-col4.metric("Tactics Covered", len(stats.get("tactic_distribution", {})))
+# ── Metrics Row ─────────────────────────────────────────────
+m1, m2, m3, m4 = st.columns(4)
+total = stats.get("total_techniques", 0)
+detected = stats.get("detected", 0)
+missed = total - detected
+m1.metric("Total Techniques", total)
+m2.metric("Detected", detected)
+m3.metric("Missed", missed)
+m4.metric("Detection Rate", f"{stats.get('detection_rate', 0)}%")
 
 st.markdown("---")
 
-# Tactic coverage chart
-from Dashboard.components.charts import tactic_coverage_bar, detection_timeline
-
+# ── Build tactic data ──────────────────────────────────────
 tactic_data = {}
 for d in detections:
     tactic = d.get("tactic", "Unknown")
@@ -45,13 +49,18 @@ for d in detections:
     if result in tactic_data[tactic]:
         tactic_data[tactic][result] += 1
 
-if tactic_data:
-    fig = tactic_coverage_bar(tactic_data)
-    st.plotly_chart(fig, width="stretch")
+# ── Charts in Tabs ──────────────────────────────────────────
+tab_bar, tab_radar, tab_timeline = st.tabs([
+    "📊 Tactic Coverage", "🎯 Coverage Radar", "📈 Timeline"
+])
 
-st.markdown("---")
+with tab_bar:
+    if tactic_data:
+        st.plotly_chart(tactic_coverage_bar(tactic_data), use_container_width=True)
 
-# Detection timeline
-st.subheader("Detection Timeline")
-fig = detection_timeline(detections)
-st.plotly_chart(fig, width="stretch")
+with tab_radar:
+    if tactic_data:
+        st.plotly_chart(technique_radar(tactic_data), use_container_width=True)
+
+with tab_timeline:
+    st.plotly_chart(detection_timeline(detections), use_container_width=True)

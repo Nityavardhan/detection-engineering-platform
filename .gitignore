@@ -38,3 +38,10 @@ desktop.ini
 
 # AI cache (if extended)
 data/ai_cache/
+
+# Downloaded Tools (Chainsaw & Sigma rules)
+tools/
+*.zip
+
+# Generated layers
+attack_coverage/coverage_layer.json

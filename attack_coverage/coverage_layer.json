@@ -6,7 +6,7 @@
     "layer": "4.5"
   },
   "domain": "enterprise-attack",
-  "description": "Validated detection coverage from automated ATT&CK simulation lab",
+  "description": "Validated detection coverage \u2014 automated ATT&CK simulation lab",
   "filters": {
     "platforms": [
       "Windows"
@@ -25,29 +25,10 @@
   "hideDisabled": false,
   "techniques": [
     {
-      "techniqueID": "T1070.001",
-      "score": 100,
-      "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
-      "enabled": true,
-      "metadata": [
-        {
-          "name": "result",
-          "value": "DETECTED"
-        },
-        {
-          "name": "validated_date",
-          "value": "2026-06-14"
-        }
-      ],
-      "links": [],
-      "showSubtechniques": false
-    },
-    {
       "techniqueID": "T1003.001",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -56,7 +37,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -66,7 +47,7 @@
       "techniqueID": "T1021.002",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -75,7 +56,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -85,7 +66,7 @@
       "techniqueID": "T1053.005",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -94,7 +75,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -104,7 +85,7 @@
       "techniqueID": "T1055.001",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -113,7 +94,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -123,7 +104,7 @@
       "techniqueID": "T1059.001",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -132,7 +113,26 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
+        }
+      ],
+      "links": [],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1070.001",
+      "score": 100,
+      "color": "#2ecc71",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "result",
+          "value": "DETECTED"
+        },
+        {
+          "name": "validated_date",
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -142,7 +142,7 @@
       "techniqueID": "T1078",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -151,7 +151,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -161,7 +161,7 @@
       "techniqueID": "T1082",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -170,7 +170,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -180,7 +180,7 @@
       "techniqueID": "T1083",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -189,7 +189,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -199,7 +199,7 @@
       "techniqueID": "T1110.001",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -208,7 +208,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -218,7 +218,7 @@
       "techniqueID": "T1218.011",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -227,7 +227,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -237,7 +237,7 @@
       "techniqueID": "T1486",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -246,7 +246,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -256,7 +256,7 @@
       "techniqueID": "T1490",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -265,7 +265,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -275,7 +275,7 @@
       "techniqueID": "T1547.001",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -284,7 +284,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -294,7 +294,7 @@
       "techniqueID": "T1566.001",
       "score": 100,
       "color": "#2ecc71",
-      "comment": "Validated 2026-06-14 | Result: DETECTED",
+      "comment": "Validated 2026-06-15 | Result: DETECTED",
       "enabled": true,
       "metadata": [
         {
@@ -303,7 +303,7 @@
         },
         {
           "name": "validated_date",
-          "value": "2026-06-14"
+          "value": "2026-06-15"
         }
       ],
       "links": [],
@@ -312,9 +312,9 @@
   ],
   "gradient": {
     "colors": [
-      "#ff6666",
-      "#ffe766",
-      "#8ec843"
+      "#e74c3c",
+      "#f39c12",
+      "#2ecc71"
     ],
     "minValue": 0,
     "maxValue": 100
@@ -333,10 +333,10 @@
       "color": "#e74c3c"
     }
   ],
-  "metadata": [],
-  "links": [],
   "showTacticRowBackground": true,
   "tacticRowBackground": "#dddddd",
   "selectTechniquesAcrossTactics": true,
-  "selectSubtechniquesWithParent": false
+  "selectSubtechniquesWithParent": false,
+  "metadata": [],
+  "links": []
 }

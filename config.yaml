@@ -2,8 +2,8 @@
 # All paths are relative to the project root unless absolute.
 
 paths:
-  chainsaw_exe: "C:/Tools/chainsaw/chainsaw.exe"
-  sigma_rules_dir: "C:/Tools/sigma/rules"
+  chainsaw_exe: "tools/chainsaw/chainsaw.exe"
+  sigma_rules_dir: "tools/sigma/rules"
   evidence_base: "evidence"
   playbooks_output: "playbooks/generated"
   reports_output: "reports/generated"
