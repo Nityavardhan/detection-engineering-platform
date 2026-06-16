@@ -126,7 +126,13 @@ def execute_pipeline(
     evtx_dir: Optional[str] = None,
     sigma_rules: Optional[str] = None,
     notes: str = "",
+    quiet: bool = False,
 ):
+    if quiet:
+        console.quiet = True
+    else:
+        console.quiet = False
+
     print_banner()
     show_preflight_check()
     start_time = datetime.now()
@@ -167,6 +173,7 @@ def execute_pipeline(
         evtx_path = Path(evtx_dir)
         if not evtx_path.exists():
             console.print(f"  [red]✗ EVTX directory not found: {evtx_path}[/red]")
+            if quiet: console.quiet = False
             raise typer.Exit(1)
 
         console.print(f"  Using provided EVTX directory: {evtx_path}")
@@ -264,6 +271,11 @@ def execute_pipeline(
     summary_table.add_row("Duration", f"{elapsed}s")
     
     console.print(summary_table)
+
+    if quiet:
+        console.quiet = False
+        
+    return detection_result
 
 
 @app.command()
