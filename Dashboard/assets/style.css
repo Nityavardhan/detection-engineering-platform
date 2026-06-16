@@ -123,6 +123,7 @@ code, pre, [data-testid="stCode"] {
     margin: 0 0 8px 0;
     background: var(--text-main);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
 }
