@@ -12,8 +12,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from core.db_manager import get_all_detections
 
-st.markdown("### 🗺️ ATT&CK Coverage")
-st.caption("Technique-level detection results mapped to the MITRE ATT&CK framework")
+# ── Custom Header ─────────────────────────────────────────────
+st.markdown("""
+<div class="hero-banner" style="padding: 24px;">
+    <h1 class="hero-title" style="font-size: 2.2rem;">ATT&CK Coverage</h1>
+    <p class="hero-subtitle">Technique-level detection results mapped to the MITRE ATT&CK framework</p>
+</div>
+""", unsafe_allow_html=True)
 
 try:
     detections = get_all_detections()
@@ -47,16 +52,29 @@ for tid, d in sorted(latest.items()):
 df = pd.DataFrame(records)
 
 # ── Metrics ──────────────────────────────────────────────────
-c1, c2, c3 = st.columns(3)
-c1.metric("Techniques Covered", len(df))
-c2.metric("Tactics Covered", df["Tactic"].nunique())
+tech_cov = len(df)
+tac_cov = df["Tactic"].nunique()
 detected_pct = round(len(df[df["Result"] == "DETECTED"]) / len(df) * 100, 1) if len(df) > 0 else 0
-c3.metric("Fully Detected", f"{detected_pct}%")
 
-st.markdown("---")
+st.markdown(f"""
+<div class="metric-grid">
+    <div class="metric-card">
+        <div class="metric-label">Techniques Covered</div>
+        <div class="metric-value" style="color: var(--neon-cyan);">{tech_cov}</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Tactics Covered</div>
+        <div class="metric-value" style="color: var(--neon-purple);">{tac_cov}</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Fully Detected</div>
+        <div class="metric-value" style="color: var(--neon-emerald);">{detected_pct}%</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Technique × Result Treemap ────────────────────────────────
-RESULT_COLORS = {"DETECTED": "#10b981", "PARTIAL": "#f59e0b", "MISSED": "#ef4444"}
+RESULT_COLORS = {"DETECTED": "#10b981", "PARTIAL": "#f59e0b", "MISSED": "#f43f5e"}
 
 parents = []
 labels = []
@@ -72,7 +90,7 @@ for _, row in df.iterrows():
         labels.append(tactic)
         parents.append("")
         values.append(0)
-        colors.append("#1e293b")
+        colors.append("#0f172a")
 
     labels.append(f"{tid}")
     parents.append(tactic)
@@ -83,63 +101,70 @@ fig = go.Figure(go.Treemap(
     labels=labels,
     parents=parents,
     values=values,
-    marker=dict(colors=colors, line=dict(width=2, color="#0a0e17")),
-    textfont=dict(size=12, family="Inter", color="white"),
+    marker=dict(colors=colors, line=dict(width=3, color="#030712")),
+    textfont=dict(size=14, family="Outfit", color="#f8fafc", weight="bold"),
     hovertemplate="<b>%{label}</b><extra></extra>",
     pathbar=dict(visible=False),
 ))
 
 fig.update_layout(
-    title=dict(text="TECHNIQUE COVERAGE MAP", font=dict(size=12, color="#64748b", family="Inter")),
-    height=450,
-    margin=dict(l=8, r=8, t=50, b=8),
+    title=dict(text="TECHNIQUE COVERAGE MAP", font=dict(size=11, color="#64748b", family="Outfit")),
+    height=480,
+    margin=dict(l=0, r=0, t=40, b=0),
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Inter", color="#94a3b8"),
+    font=dict(family="Outfit", color="#94a3b8"),
 )
 
+st.markdown('<div class="chart-container">', unsafe_allow_html=True)
 st.plotly_chart(fig, use_container_width=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ── Detailed Table ───────────────────────────────────────────
-st.markdown("---")
-
-st.markdown("### Technique Details")
+st.markdown('<div class="section-title">Technique Details</div>', unsafe_allow_html=True)
 
 from Dashboard.components.tables import styled_detections_table
+
+st.markdown('<div class="chart-container" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
 st.dataframe(
     styled_detections_table(df),
     use_container_width=True,
     hide_index=True,
-    height=min(len(df) * 40 + 50, 600),
+    height=min(len(df) * 45 + 40, 600),
 )
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ── Navigator Layer Download ─────────────────────────────────
-st.markdown("---")
-
 col_nav, col_info = st.columns([1, 2])
 layer_path = Path("attack_coverage/coverage_layer.json")
 
 with col_nav:
-    st.markdown("### Navigator Layer")
+    st.markdown('<div class="chart-container" style="height:100%;">', unsafe_allow_html=True)
+    st.markdown('<div class="section-title" style="font-size:1rem;">Navigator Layer</div>', unsafe_allow_html=True)
     if layer_path.exists():
         layer_json = layer_path.read_text(encoding="utf-8")
         layer_data = json.loads(layer_json)
-        st.metric("Techniques in Layer", len(layer_data.get("techniques", [])))
+        tech_len = len(layer_data.get("techniques", []))
+        st.markdown(f'<div style="font-size:2rem; font-weight:700; color:var(--neon-cyan); margin-bottom:16px;">{tech_len} <span style="font-size:1rem;color:var(--text-muted);font-weight:400;">Layer Rules</span></div>', unsafe_allow_html=True)
         st.download_button(
-            label="Download Navigator Layer",
+            label="Download JSON Layer",
             data=layer_json,
             file_name="coverage_layer.json",
             mime="application/json",
+            use_container_width=True
         )
     else:
         st.warning("Layer not yet generated.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col_info:
-    st.markdown("### How to Use")
+    st.markdown('<div class="chart-container" style="height:100%;">', unsafe_allow_html=True)
+    st.markdown('<div class="section-title" style="font-size:1rem;">How to Use</div>', unsafe_allow_html=True)
     st.markdown("""
-1. Download the Navigator layer JSON file
-2. Go to [ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/)
-3. Click **Open Existing Layer** → **Upload from local**
-4. Select the downloaded `coverage_layer.json`
-5. View your detection coverage heatmap
+    1. Download the Navigator layer JSON file.
+    2. Go to [ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/).
+    3. Click **Open Existing Layer** → **Upload from local**.
+    4. Select the downloaded `coverage_layer.json`.
+    5. View your detection coverage heatmap mapping!
     """)
+    st.markdown('</div>', unsafe_allow_html=True)

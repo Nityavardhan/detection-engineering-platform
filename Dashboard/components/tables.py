@@ -6,25 +6,26 @@ import pandas as pd
 
 
 def styled_detections_table(df: pd.DataFrame) -> "pd.io.formats.style.Styler":
-    """Apply professional color styling to detection result and severity columns."""
+    """Apply professional neon color styling to detection result and severity columns."""
 
     def _color_result(val):
         val_clean = str(val).strip()
         color_map = {
-            "DETECTED": "background-color: rgba(16,185,129,0.15); color: #10b981; font-weight:600;",
-            "PARTIAL": "background-color: rgba(245,158,11,0.15); color: #f59e0b; font-weight:600;",
-            "MISSED": "background-color: rgba(239,68,68,0.15); color: #ef4444; font-weight:600;",
+            "DETECTED": "background-color: rgba(16,185,129,0.1); color: #10b981; font-weight:700; border: 1px solid rgba(16,185,129,0.3); border-radius: 4px;",
+            "PARTIAL": "background-color: rgba(245,158,11,0.1); color: #f59e0b; font-weight:700; border: 1px solid rgba(245,158,11,0.3); border-radius: 4px;",
+            "MISSED": "background-color: rgba(244,63,94,0.1); color: #f43f5e; font-weight:700; border: 1px solid rgba(244,63,94,0.3); border-radius: 4px;",
+            "ERROR": "background-color: rgba(244,63,94,0.1); color: #f43f5e; font-weight:700; border: 1px solid rgba(244,63,94,0.3); border-radius: 4px;",
         }
         return color_map.get(val_clean, "")
 
     def _color_severity(val):
         val_clean = str(val).strip()
         color_map = {
-            "CRITICAL": "color: #ef4444; font-weight: 700;",
-            "HIGH": "color: #f97316; font-weight: 600;",
-            "MEDIUM": "color: #f59e0b;",
-            "LOW": "color: #6366f1;",
-            "INFORMATIONAL": "color: #64748b;",
+            "CRITICAL": "color: #f43f5e; font-weight: 800;",
+            "HIGH": "color: #f97316; font-weight: 700;",
+            "MEDIUM": "color: #f59e0b; font-weight: 600;",
+            "LOW": "color: #3b82f6;",
+            "INFORMATIONAL": "color: #a855f7;",
         }
         return color_map.get(val_clean, "")
 

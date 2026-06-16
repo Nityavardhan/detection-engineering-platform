@@ -13,8 +13,13 @@ from Dashboard.components.charts import (
     tactic_coverage_bar, detection_timeline, technique_radar
 )
 
-st.markdown("### 📊 Overview")
-st.caption("Detection coverage across all validated ATT&CK tactics and techniques")
+# ── Custom Header ─────────────────────────────────────────────
+st.markdown("""
+<div class="hero-banner" style="padding: 24px;">
+    <h1 class="hero-title" style="font-size: 2.2rem;">Overview & Analytics</h1>
+    <p class="hero-subtitle">Detection coverage across all validated ATT&CK tactics and techniques</p>
+</div>
+""", unsafe_allow_html=True)
 
 try:
     detections = get_all_detections()
@@ -28,16 +33,32 @@ if not detections:
     st.stop()
 
 # ── Metrics Row ─────────────────────────────────────────────
-m1, m2, m3, m4 = st.columns(4)
 total = stats.get("total_techniques", 0)
 detected = stats.get("detected", 0)
 missed = total - detected
-m1.metric("Total Techniques", total)
-m2.metric("Detected", detected)
-m3.metric("Missed", missed)
-m4.metric("Detection Rate", f"{stats.get('detection_rate', 0)}%")
+rate = stats.get("detection_rate", 0)
 
-st.markdown("---")
+st.markdown(f"""
+<div class="metric-grid">
+    <div class="metric-card">
+        <div class="metric-label">Total Techniques</div>
+        <div class="metric-value" style="color: var(--neon-blue);">{total}</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Detected</div>
+        <div class="metric-value" style="color: var(--neon-emerald);">{detected}</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Missed</div>
+        <div class="metric-value" style="color: var(--neon-rose);">{missed}</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Detection Rate</div>
+        <div class="metric-value" style="color: var(--neon-purple);">{rate}%</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 
 # ── Build tactic data ──────────────────────────────────────
 tactic_data = {}
@@ -50,17 +71,26 @@ for d in detections:
         tactic_data[tactic][result] += 1
 
 # ── Charts in Tabs ──────────────────────────────────────────
+st.markdown('<div class="chart-container" style="padding:0; border:none; background:transparent; box-shadow:none;">', unsafe_allow_html=True)
 tab_bar, tab_radar, tab_timeline = st.tabs([
-    "📊 Tactic Coverage", "🎯 Coverage Radar", "📈 Timeline"
+    "Tactic Coverage", "Coverage Radar", "Timeline"
 ])
 
 with tab_bar:
     if tactic_data:
+        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         st.plotly_chart(tactic_coverage_bar(tactic_data), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 with tab_radar:
     if tactic_data:
+        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
         st.plotly_chart(technique_radar(tactic_data), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 with tab_timeline:
+    st.markdown('<div class="chart-container">', unsafe_allow_html=True)
     st.plotly_chart(detection_timeline(detections), use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
